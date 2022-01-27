@@ -22,7 +22,7 @@ local function mockPermissionBits()
 end
 
 math.randomseed(1323434)
-for i = 1, 500000 do
+for i = 1, 9000000 do
     local companyId = string.format("%1d%06d", (i % 9 + 1), math.random(100000))
     redis.call("hset", "RegionPermission", companyId, mockPermissionBits())
 end
