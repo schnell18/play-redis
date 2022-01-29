@@ -35,9 +35,9 @@ if [[ ! -d .state/redis-sentinel2/data ]]; then
     mkdir -p .state/redis-sentinel2/data/{node1,node2,node3}
 fi
 
-if [[ ! -d .state/redis-sentinel2/conf ]]; then
-    mkdir -p .state/redis-sentinel2/conf/{node1,node2,node3,sentinel1,sentinel2,sentinel3}
-fi
+# use root to delete conf dir since redis container runs as root
+sudo rm -fr .state/redis-sentinel2/conf
+mkdir -p .state/redis-sentinel2/conf/{node1,node2,node3,sentinel1,sentinel2,sentinel3}
 
 # generate redis config file and use host IP
 generateMasterRedisConf 7379 .state/redis-sentinel2/conf/node1/redis.conf
@@ -50,7 +50,3 @@ generateSentinelConf 5501 .state/redis-sentinel2/conf/sentinel1/sentinel.conf 73
 generateSentinelConf 5502 .state/redis-sentinel2/conf/sentinel2/sentinel.conf 7379 $hostip $hostip
 generateSentinelConf 5503 .state/redis-sentinel2/conf/sentinel3/sentinel.conf 7379 $hostip $hostip
 
-# remove nodes files to work around IP change
-# rm -fr .state/redis-sentinel2/data/node1/*
-# rm -fr .state/redis-sentinel2/data/node2/*
-# rm -fr .state/redis-sentinel2/data/node3/*
