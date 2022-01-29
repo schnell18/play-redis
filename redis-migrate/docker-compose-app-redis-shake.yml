@@ -1,0 +1,17 @@
+# dockerized virtual environment
+version: '3.9'
+
+services:
+
+  redis-shake:
+    build:
+      context: ./backends/redis-shake/
+      dockerfile: Dockerfile
+    image: schnell18/redis-shake:latest
+    depends_on:
+      redis-snode11:
+        condition: service_healthy
+      redis-snode21:
+        condition: service_healthy
+    volumes:
+      - ./provision/apps/redis-shake/config/redis-shake.conf:/usr/local/app/redis-shake.conf

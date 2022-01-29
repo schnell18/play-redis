@@ -95,20 +95,25 @@ RedisShake 配置如下：
     pid_path =
     system_profile = 9310
     http_profile = 9320
-    parallel = 32
-    source.type = standalone
-    source.address = 127.0.0.1:20441
-    source.password_raw =
+
+    source.type = sentinel
+    source.address = mymaster:master@127.0.0.1:5001;127.0.0.1:5002;127.0.0.1:5003;
+    source.password_raw = abc123
     source.auth_type = auth
     source.tls_enable = false
     source.tls_skip_verify = false
     source.rdb.input =
     source.rdb.parallel = 0
     source.rdb.special_cloud =
-    target.type = standalone
-    target.address = 127.0.0.1:6379
-    target.password_raw =
+    target.type = sentinel
+    target.address = mymaster:master@127.0.0.1:5501;127.0.0.1:5502;127.0.0.1:5503;
+    target.password_raw = abc123
     target.auth_type = auth
+    key_exists = rewrite
+    parallel = 32
+    qps = 200000
+    keep_alive = 10
+
     target.db = -1
     target.dbmap =
     target.tls_enable = false
@@ -116,7 +121,6 @@ RedisShake 配置如下：
     target.rdb.output = local_dump
     target.version =
     fake_time =
-    key_exists = rewrite
     filter.lua = false
     big_key_threshold = 524288000
     metric = true
@@ -124,8 +128,6 @@ RedisShake 配置如下：
     sender.size = 104857600
     sender.count = 4095
     sender.delay_channel_size = 65535
-    keep_alive = 0
-    qps = 200000
     resume_from_break_point = false
     replace_hash_tag = false
 
