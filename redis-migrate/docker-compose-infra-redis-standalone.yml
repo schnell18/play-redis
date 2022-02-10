@@ -4,7 +4,7 @@ version: '3.9'
 services:
 
   redis-standalone:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-server, /etc/redis/redis.conf]
     healthcheck:

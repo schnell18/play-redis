@@ -1,0 +1,6 @@
+[submodule "redis-migrate/backends/mig-tools/RedisShake"]
+	path = redis-migrate/backends/mig-tools/RedisShake
+	url = git@github.com:schnell18/RedisShake.git
+[submodule "redis-migrate/backends/mig-tools/RedisFullCheck"]
+	path = redis-migrate/backends/mig-tools/RedisFullCheck
+	url = git@github.com:schnell18/RedisFullCheck.git

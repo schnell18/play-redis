@@ -4,7 +4,7 @@ version: '3.9'
 services:
 
   redis-cnode21:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-server, /etc/redis/redis.conf]
     healthcheck:
@@ -20,7 +20,7 @@ services:
       - "17701:17701"
 
   redis-cnode22:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-server, /etc/redis/redis.conf]
     healthcheck:
@@ -36,7 +36,7 @@ services:
       - "17702:17702"
 
   redis-cnode23:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-server, /etc/redis/redis.conf]
     healthcheck:
@@ -53,7 +53,7 @@ services:
       - "17703:17703"
 
   redis-cluster-creator2:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     entrypoint: [sh, -c, /usr/local/bin/create-cluster.sh]
     volumes:
       - ./.state/redis-cluster2/bin/create-cluster.sh:/usr/local/bin/create-cluster.sh

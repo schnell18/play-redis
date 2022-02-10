@@ -1,0 +1,19 @@
+# dockerized virtual environment
+version: '3.9'
+
+services:
+
+  mig-tools:
+    build:
+      context: ./backends/mig-tools/
+      dockerfile: Dockerfile
+    image: schnell18/mig-tools:latest
+    command: |
+      sh -c "trap : TERM INT; (while true; do sleep 1000; done) & wait"
+    depends_on:
+      redis-snode11:
+        condition: service_healthy
+      redis-snode21:
+        condition: service_healthy
+    volumes:
+      - ./provision/apps/mig-tools/config/redis-shake.conf:/tools/redis-shake.conf

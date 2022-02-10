@@ -4,7 +4,7 @@ version: '3.9'
 services:
 
   redis-snode21:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-server, /etc/redis/redis.conf]
     healthcheck:
@@ -19,7 +19,7 @@ services:
       - "7379:7379"
 
   redis-snode22:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-server, /etc/redis/redis.conf]
     healthcheck:
@@ -34,7 +34,7 @@ services:
       - "7380:7380"
 
   redis-snode23:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-server, /etc/redis/redis.conf]
     healthcheck:
@@ -50,7 +50,7 @@ services:
       - "7381:7381"
 
   redis-sentinel21:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-sentinel, /etc/redis/sentinel.conf]
     healthcheck:
@@ -64,7 +64,7 @@ services:
       - "5501:5501"
 
   redis-sentinel22:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-sentinel, /etc/redis/sentinel.conf]
     healthcheck:
@@ -78,7 +78,7 @@ services:
       - "5502:5502"
 
   redis-sentinel23:
-    image: redis:6.2.1-alpine
+    image: redis:4.0.14-alpine
     restart: always
     entrypoint: [redis-sentinel, /etc/redis/sentinel.conf]
     healthcheck:

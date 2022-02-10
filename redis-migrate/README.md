@@ -1,17 +1,18 @@
 # Redis 集群迁移实验环境
 
-本虚拟开发环境提供了一个集群模式的 redis 和两个哨兵模式的 redis 集群。
+本虚拟开发环境提供了两个集群模式的 redis 和两个哨兵模式的 redis 集群。
 方便进行集群迁移测试。
 
 ## 环境设置
 
-本项目开发环境在 MacOS 测试验证过，理论上也可以在 Linux 及 Windows 运行。
-使用本项目开发环境时请安装 Docker Desktop 3.5。[MacOS 版本下载地址][1]
-此外，为方便使用命令行工具，安装配置好相关工具：
+本项目开发环境在 MacOS 和 Manjaro Linux 测试验证过，理论上也可以在其它 Linux 及 Windows 运行。
+使用本项目需安装 Docker Desktop 3.5 或以上。[MacOS 版本下载地址][1]
+此外，为方便使用命令行工具，请安装配置好以下工具：
 
 - redis-cli
 - git
 - jq
+- yq
 - curl
 - xxd
 
@@ -19,18 +20,7 @@
 以上步骤完成后请克隆 [play-redis 项目 git 库][2]，命令如下：
 
     cd ~/work
-    git clone https://github.com/schnell18/play-redis.git
-
-## 启动环境
-
-运行以下命令启动 redis sentinel 集群 1 和集群 2:
-
-    cd ~/play-redis/redis-migrate
-    ./infractl.sh start redis-sentinel1 redis-sentinel2
-
-环境启动后可以通过以下命令检测各个容器是否正常工作：
-
-    ./infractl.sh status all
+    git clone --recurse-submodule https://github.com/schnell18/play-redis.git
 
 
 ## 使用 RedisShake 迁移 sentinel 模式 redis 集群
@@ -81,61 +71,108 @@
 数据生成脚本运行完毕后可以将以上文件拷贝到哨兵模式集群的主节点数据文件夹下。
 该文件夹路径为`.state/redis-sentinel1/data/node1/`
 
-## 数据迁移
+### 启动 redis 集群
+
+运行以下命令启动 redis sentinel 集群 1 和集群 2:
+
+    cd ~/play-redis/redis-migrate
+    ./infractl.sh start redis-sentinel1 redis-sentinel2 mig-tools
+
+环境启动后可以通过以下命令检测各个容器是否正常工作：
+
+    ./infractl.sh status all
 
 ### 配置 RedisShake
 
-RedisShake 配置如下：
-
+RedisShake 配置如下 (provision/apps/mig-tools/config/redis-shake.conf)：
 
     conf.version = 1
     id = redis-shake
-    log.file =
+
     log.level = info
-    pid_path =
+
     system_profile = 9310
     http_profile = 9320
 
+    parallel = 32
+
     source.type = sentinel
-    source.address = mymaster:master@127.0.0.1:5001;127.0.0.1:5002;127.0.0.1:5003;
+
+    source.address = mymaster:master@redis-sentinel11:5001;redis-sentinel12:5002;redis-sentinel13:5003
+
     source.password_raw = abc123
+
     source.auth_type = auth
     source.tls_enable = false
     source.tls_skip_verify = false
     source.rdb.input =
     source.rdb.parallel = 0
     source.rdb.special_cloud =
-    target.type = sentinel
-    target.address = mymaster:master@127.0.0.1:5501;127.0.0.1:5502;127.0.0.1:5503;
-    target.password_raw = abc123
-    target.auth_type = auth
-    key_exists = rewrite
-    parallel = 32
-    qps = 200000
-    keep_alive = 10
 
-    target.db = -1
+    target.type = sentinel
+    target.address = mymaster:master@redis-sentinel21:5501;redis-sentinel22:5502;redis-sentinel23:5503
+
+    target.password_raw = abc123
+
+    target.auth_type = auth
+    target.db = 0
+
     target.dbmap =
+
     target.tls_enable = false
     target.tls_skip_verify = false
     target.rdb.output = local_dump
     target.version =
+
     fake_time =
+
+    key_exists = rewrite
+
+    filter.db.whitelist =
+    filter.db.blacklist =
+    filter.key.whitelist =
+    filter.key.blacklist =
+    filter.slot =
+    filter.command.whitelist =
+    filter.command.blacklist =
     filter.lua = false
+
     big_key_threshold = 524288000
+
     metric = true
     metric.print_log = false
+
     sender.size = 104857600
     sender.count = 4095
     sender.delay_channel_size = 65535
+
+    keep_alive = 10
+
+    scan.key_number = 50
+    scan.special_cloud =
+    scan.key_file =
+
+    qps = 200000
+
     resume_from_break_point = false
+
     replace_hash_tag = false
 
 ### 执行迁移
 
+redis-shake 工具包含在 mig-tools 容器中。
+首次使用需要构建该容器的镜像：
+
+    ./appctl.sh build mig-tools
+
+运行以下启动该容器并登录到该容器中：
+
+    ./appctl.sh start mig-tools
+    ./appctl.sh attach mig-tools
+
 运行以下命令进行迁移：
 
-    redis-shake -conf redis-shake.conf -type sync
+    ./redis-shake -conf redis-shake.conf -type sync
 
 [1]: https://desktop.docker.com/mac/stable/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=header
 [2]: https://github.com/schnell18/play-redis.git
