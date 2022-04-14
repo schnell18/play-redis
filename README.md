@@ -29,5 +29,5 @@
 | [geo-demo][3]      | redis geo function demononstration                  |
 
 [1]: https://github.com/alibaba/RedisShake
-[2]: https://github.com/schnell18/play-redis/redis-migrate/README.md
-[3]: https://github.com/schnell18/play-redis/geo-demo/README.md
+[2]: https://github.com/schnell18/play-redis/tree/master/redis-migrate#introduction
+[3]: https://github.com/schnell18/play-redis/tree/master/geo-demo#introduction
